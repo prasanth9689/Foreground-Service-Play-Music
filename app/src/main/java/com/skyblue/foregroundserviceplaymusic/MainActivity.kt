@@ -3,6 +3,7 @@ package com.skyblue.foregroundserviceplaymusic
 import android.content.Intent
 import android.Manifest
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -13,6 +14,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.skyblue.foregroundserviceplaymusic.databinding.ActivityMainBinding
 import java.util.LinkedList
 import java.util.SortedSet
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private var allLoaded = false
     private var rowsToLoad = 0
     private var startingRow = 0
+    val galleryImageUrls = LinkedList<GalleryPicture>()
 
     /*
      https://medium.com/android-news/custom-gallery-for-android-af2437b227da
@@ -39,6 +42,19 @@ class MainActivity : AppCompatActivity() {
 
         requestReadStoragePermission()
         loadMusicList()
+
+        binding.recyclerview.layoutManager = LinearLayoutManager(this)
+
+        val adapter = CustomAdapter(galleryImageUrls, context);
+        binding.recyclerview.adapter = adapter
+
+        /*
+
+        for (galleryPicture in galleryImageUrls){
+            Log.i(TAG, galleryPicture.path)
+        }
+         */
+
 
         binding.start.setOnClickListener {
             val intent = Intent(context, MusicPlayerService::class.java)
@@ -63,7 +79,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchGalleryImages(context: Context, rowsPerLoad: Int): List<GalleryPicture> {
-        val galleryImageUrls = LinkedList<GalleryPicture>()
         val cursor = getGalleryCursor(context)
 
         if (cursor != null && !allLoaded) {
@@ -74,11 +89,16 @@ class MainActivity : AppCompatActivity() {
                 rowsToLoad = rowsPerLoad
             }
 
-            for (i in startingRow until rowsToLoad) {
+            for (i in startingRow until cursor.count) {
                 cursor.moveToPosition(i)
-                val dataColumnIndex =
-                    cursor.getColumnIndex(MediaStore.MediaColumns._ID) //get column index
-                galleryImageUrls.add(GalleryPicture(getImageUri(cursor.getString(dataColumnIndex)).toString())) //get Image path from column index
+                val dataColumnIndex = cursor.getColumnIndex(MediaStore.MediaColumns._ID) //get column index
+                val displayNameCol = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+
+                galleryImageUrls.add(
+                    GalleryPicture(
+                         getImageUri(cursor.getString(dataColumnIndex)).toString() ,
+                                     cursor.getString(displayNameCol))
+                                  )
 
             }
             Log.i(TAG, "TotalGallerySize : $totalRows")
@@ -103,8 +123,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getGalleryCursor(context: Context): Cursor? {
-        val externalUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val columns = arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.DATE_MODIFIED)
+        val externalUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+        val columns = arrayOf(
+            MediaStore.MediaColumns._ID,
+            MediaStore.MediaColumns.DATE_MODIFIED,
+            MediaStore.MediaColumns.DISPLAY_NAME
+        )
+
         val orderBy = MediaStore.MediaColumns.DATE_MODIFIED //order data by modified
         return context.contentResolver
             .query(
@@ -116,12 +141,12 @@ class MainActivity : AppCompatActivity() {
             )//get all data in Cursor by sorting in DESC order
     }
 
-    data class GalleryPicture(val path: String) {
+    data class GalleryPicture(val path: String, val name: String) {
         var isSelected = false
     }
 
     private fun getImageUri(path: String) = ContentUris.withAppendedId(
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
         path.toLong()
     )
 

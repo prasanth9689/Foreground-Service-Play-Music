@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -12,6 +14,9 @@ import androidx.core.app.NotificationCompat
 
 class MusicPlayerService: Service() {
     private val TAG = "MainActivity_"
+    var isPlaying: Boolean = false
+    var player: MediaPlayer? = null
+
 
     @Override
     override fun onBind(intent: Intent?): IBinder? {
@@ -19,21 +24,26 @@ class MusicPlayerService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val songName = intent?.getStringExtra("music_name")
 
-        // Service has started running in the background
-        if (intent != null){
-            Log.d(TAG, "Service Name: $songName")
+        if (intent != null) {
+            if (intent.action.equals("start_service")){
+                val songName = intent.getStringExtra("name")
+                val songUri = intent.getStringExtra("uri")
+
+                if (player == null){
+                    player = MediaPlayer.create(this, Uri.parse(songUri))
+                }
+                player!!.start()
+                createNotification(songName);
+            }else if (intent.action.equals("stop_service")){
+                if (player != null) {
+                    player!!.release()
+                    player = null
+                }
+                isPlaying = false
+                stopSelf()
+            }
         }
-
-        // Service Status : Service has been started
-        for (i in 1..10){
-            Thread.sleep(100)
-            Log.d(TAG, "Service is running: $i")
-        }
-        createNotification(songName);
-
-        stopSelf()
         return START_STICKY
     }
 
@@ -51,11 +61,11 @@ class MusicPlayerService: Service() {
         }
 
         val notification = NotificationCompat.Builder(this, "running_channel")
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Run is active")
+            .setSmallIcon(R.drawable.ic_music)
+            .setContentTitle("Music Player")
             .setContentText(songName)
             .build()
-        startForeground(1234, notification)
+        startForeground(1, notification)
     }
 
     override fun stopService(name: Intent?): Boolean {
