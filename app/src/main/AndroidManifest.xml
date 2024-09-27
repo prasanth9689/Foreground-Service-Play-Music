@@ -34,6 +34,8 @@
             android:name=".MusicPlayerService"
             android:foregroundServiceType="mediaPlayback"
             tools:ignore="Instantiatable" />
+
+        <receiver android:name=".NotificationReceiver"/>
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.skyblue.foregroundserviceplaymusic
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
+
 
 class MusicPlayerService: Service() {
     private val TAG = "MainActivity_"
@@ -64,8 +66,17 @@ class MusicPlayerService: Service() {
             .setSmallIcon(R.drawable.ic_music)
             .setContentTitle("Music Player")
             .setContentText(songName)
+            .addAction(R.drawable.ic_stop,  "Stop", makePendingIntent("quit_action"))
             .build()
         startForeground(1, notification)
+    }
+
+    fun makePendingIntent(name: String?): PendingIntent {
+        val intent = Intent(this, NotificationReceiver::class.java)
+        intent.setAction(name)
+
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        return pendingIntent
     }
 
     override fun stopService(name: Intent?): Boolean {

@@ -30,11 +30,6 @@ class MainActivity : AppCompatActivity() {
     private var startingRow = 0
     val galleryImageUrls = LinkedList<GalleryPicture>()
 
-    /*
-     https://medium.com/android-news/custom-gallery-for-android-af2437b227da
-     https://github.com/mmobin789/Android-Custom-Gallery/blob/master/app-rx/src/main/java/rx/kt/gallery/viewmodel/GalleryViewModel.kt#L29
-     */
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -75,12 +70,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNow() {
-        Toast.makeText(context, "Permission Granted", Toast.LENGTH_SHORT).show()
+        // Permission Granted
     }
 
     private fun fetchGalleryImages(context: Context, rowsPerLoad: Int): List<GalleryPicture> {
         val cursor = getGalleryCursor(context)
-
         if (cursor != null && !allLoaded) {
             val totalRows = cursor.count
 

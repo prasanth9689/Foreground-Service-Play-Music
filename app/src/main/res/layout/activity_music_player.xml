@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="#FFAAC4"
     tools:context=".MusicPlayerActivity">
 
     <RelativeLayout
@@ -17,6 +17,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
             android:text="Music Player"
+            android:textColor="@color/black"
             android:textStyle="bold"
             android:textSize="20sp"
             android:layout_marginStart="10dp"/>
@@ -26,26 +27,27 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="52dp"
         android:id="@+id/background"
-        android:background="#252525"
         tools:context=".MainActivity">
-
 
 
         <ImageView
             android:id="@+id/musicImage"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/background"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.13999999" />
+            app:layout_constraintVertical_bias="0.13999999"
+            android:src="@drawable/music_1"
+            android:scaleType="fitCenter"/>
+
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -61,7 +63,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/fabPlayOrPause"
                 android:layout_width="60dp"
@@ -69,7 +70,7 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:backgroundTint="#FFA500"
+                android:backgroundTint="#E91E63"
                 android:src="@drawable/ic_play"
                 app:fabCustomSize="60dp"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -81,12 +82,11 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:backgroundTint="#FFA500"
+                android:backgroundTint="#F44336"
                 android:src="@drawable/ic_stop"
                 app:fabCustomSize="60dp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent" />
-
+                />
 
         </LinearLayout>
 

@@ -27,55 +27,13 @@ class MusicPlayerActivity : AppCompatActivity() {
         val songName = intent.getStringExtra("name")
         val  songUri = intent.getStringExtra("uri")
 
+        playSong(songName, songUri)
+
         Log.i(TAG, "Song Name : $songName" +
                 "\nSong Uri : $songUri")
 
         binding.fabPlayOrPause.setOnClickListener {
-            if (isPlaying) {
-                isPlaying = false
-                binding.fabPlayOrPause.setImageResource(R.drawable.ic_play)
-            } else {
-
-                val serviceIntent = Intent(this, MusicPlayerService::class.java)
-                serviceIntent.putExtra("name", songName)
-                serviceIntent.putExtra("uri", songUri)
-                serviceIntent.action = "start_service"
-                startService(serviceIntent)
-
-                isPlaying = true
-                with(binding) {
-                    fabPlayOrPause.setImageResource(R.drawable.ic_pause)
-                    fabStop.visibility = View.VISIBLE
-                }
-
-
-                /*
-            if (isPlaying) {
-                if (player != null){
-                    player!!.pause()
-                    isPlaying = false
-                    binding.fabPlayOrPause.setImageResource(R.drawable.ic_play)
-                }
-            } else {
-                if (player == null){
-
-                    val serviceIntent = Intent(this, MusicPlayerService::class.java)
-                    serviceIntent.putExtra("name", songName)
-                    serviceIntent.action = "start_service"
-                    startService(serviceIntent)
-
-                    player = MediaPlayer.create(this, Uri.parse(songUri))
-                }
-                player!!.start()
-                isPlaying = true
-                with(binding) {
-                    fabPlayOrPause.setImageResource(R.drawable.ic_pause)
-                    fabStop.visibility = View.VISIBLE
-                }
-
-            }
-             */
-            }
+                playSong(songName, songUri)
         }
 
         binding.fabStop.setOnClickListener {
@@ -88,4 +46,19 @@ class MusicPlayerActivity : AppCompatActivity() {
             binding.fabPlayOrPause.setImageResource(R.drawable.ic_play)
         }
     }
+
+    private fun playSong(songName: String?, songUri: String?) {
+        val serviceIntent = Intent(this, MusicPlayerService::class.java)
+        serviceIntent.putExtra("name", songName)
+        serviceIntent.putExtra("uri", songUri)
+        serviceIntent.action = "start_service"
+        startService(serviceIntent)
+
+        isPlaying = true
+        with(binding) {
+            fabPlayOrPause.setImageResource(R.drawable.ic_pause)
+            fabStop.visibility = View.VISIBLE
+        }
+    }
+
 }
